@@ -1,3 +1,10 @@
+// Packages used for authentication (Session & Passport)
+const session = require('express-session');
+const passport = require('passport');
+
+// Passport initial setup
+require('./config/passport');
+
 // ℹ️ Gets access to environment variables/settings
 // https://www.npmjs.com/package/dotenv
 require('dotenv/config');
@@ -15,6 +22,19 @@ const hbs = require('hbs');
 
 const app = express();
 
+// Session settings. Allows our app to mantain the sessions and our users in it
+app.use(
+  session({
+    secret: 'some secret goes here',
+    resave: true,
+    saveUninitialized: false
+  })
+);
+
+// To allow our app to use passport for auth
+app.use(passport.initialize());
+app.use(passport.session());
+
 // ℹ️ This function is getting exported from the config folder. It runs most middlewares
 require('./config')(app);
 
@@ -29,6 +49,9 @@ const index = require('./routes/index');
 app.use('/', index);
 
 // ROUTES MIDDLEWARE STARTS HERE:
+const authRouter = require('./routes/auth.routes'); // <== has to be added
+app.use('/api', authRouter); // <== has to be added
+
 const projectRouter = require('./routes/project.routes'); // <== has to be added
 app.use('/api', projectRouter); // <== has to be added
 

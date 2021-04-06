@@ -9,18 +9,14 @@ const Task = require('../models/Task.model'); // <== !!!
 
 // POST route => to create a new project
 router.post('/projects', (req, res, next) => {
-  const { title, description } = req.body;
   Project.create({
-    title,
-    description,
-    tasks: []
+    title: req.body.title,
+    description: req.body.description,
+    tasks: [],
+    owner: req.user._id // <== !!!
   })
-    .then(response => {
-      res.json(response);
-    })
-    .catch(err => {
-      res.json(err);
-    });
+    .then(response => res.json(response))
+    .catch(err => res.json(err));
 });
 
 // GET route => to get all the projects
